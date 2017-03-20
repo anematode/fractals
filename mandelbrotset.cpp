@@ -18,8 +18,8 @@ using namespace std;
 
 /** Customizable variables **/
 
-const int w = 2048;						// Width, in pixels, of the output image
-const int h = 2048;						// Height, in pixels, of the output image
+const int w = 2048;					// Width, in pixels, of the output image
+const int h = 2048;					// Height, in pixels, of the output image
 
 const float re_min = -2.5;				// Real value of the left edge of the image
 const float re_max = 1.5;				// Real value of the right edge of the image
@@ -33,42 +33,42 @@ const int escaperadius = 2;				// Critical radius determining non-boundedness un
 string filename = "/Users/anematode/Desktop/mandelbrot.pgm";
 
 int main() {
-	clock_t begin = clock();								// Begin clock
+	clock_t begin = clock();					// Begin clock
 
 	const float colordecrement = 250.0/iterations;			// Change in pixel darkness after each iteration
 	const int radiussquared = escaperadius * escaperadius;
 
-	ofstream image;											// Image output stream
-	image.open(filename,ios_base::app);						// Open output stream
+	ofstream image;							// Image output stream
+	image.open(filename,ios_base::app);				// Open output stream
 
 	image << "P2\n# Fractal image\n" <<
-			to_string(w) << ' ' << to_string(h)				// Write header data
+			to_string(w) << ' ' << to_string(h)		// Write header data
 			<< "\n255\n";
 
-	float xdelta = (re_max-re_min)/w;						// Difference between consecutive pixels in a row
-	float ydelta = (im_max-im_min)/h;						// Difference between consecutive pixels in a column
+	float xdelta = (re_max-re_min)/w;				// Difference between consecutive pixels in a row
+	float ydelta = (im_max-im_min)/h;				// Difference between consecutive pixels in a column
 
-	int row = 0;											// Current row number
+	int row = 0;							// Current row number
 
 	for (double y = im_min; y < im_max; y += ydelta) {		// For all imaginary positions y...
 
-		row += 1;											// Increment row number
-		if (row % 100 == 0) {								// Status report every 100 rows
+		row += 1;						// Increment row number
+		if (row % 100 == 0) {					// Status report every 100 rows
 			cout << "Completed row #" << row << ". "
 					<< to_string(100*(y-im_min)/(im_max-im_min))
 					<< "\% done with image." << endl;
 		}
 
 		for (double x = re_min; x < re_max; x += xdelta) {	// For all real positions x...
-			complex<double> z(x,y);							// Construct a complex number z = x + yi
+			complex<double> z(x,y);				// Construct a complex number z = x + yi
 
 			complex<double> k;
-			k = z;											// Construct a complex number k = z
+			k = z;						// Construct a complex number k = z
 
-			float n = 255.0;								// Stores grayscale value of current pixel (255 = white, 0 = black)
+			float n = 255.0;				// Stores grayscale value of current pixel (255 = white, 0 = black)
 
 			while (z.real()*z.real() + z.imag()*z.imag() < radiussquared
-					&& n >= 5) {							// While complex number is within the escape radius and insufficient iterations have passed...
+					&& n >= 5) {			// While complex number is within the escape radius and insufficient iterations have passed...
 
 				/** The following assignment of z is the central iterative function, which continually assigns z = f(z).
 				 * Since the function is f(z) = z*z + k, where k is the value of z before any iteration, this program
@@ -77,17 +77,17 @@ int main() {
 
 				z = z*z+k;
 
-				n -= colordecrement;						// Decrement n by the needed grayscale value
+				n -= colordecrement;			// Decrement n by the needed grayscale value
 			}
-			image << to_string((int) n) << endl;			// Write pixel to file
+			image << to_string((int) n) << endl;		// Write pixel to file
 		}
-		image << '\n';										// End this row
+		image << '\n';						// End this row
 	}
 
-	clock_t end = clock();									// End clock
+	clock_t end = clock();						// End clock
 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
 	cout << "Computed " << w*h << " pixels in " << elapsed_secs << " seconds (CPU time)!" << endl;
 
-	image.close();											// Close the image
+	image.close();							// Close the image
 }
